@@ -1,6 +1,9 @@
 const { Translate } = require("@google-cloud/translate").v2;
 
-const translate = new Translate();
+const translate = new Translate({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+});
 
 const translateText = async (faq) => {
   if (!faq.question || !faq.answer) {
