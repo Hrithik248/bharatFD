@@ -10,10 +10,10 @@ const translateText = async (faq) => {
   }
 
   try {
-    const [hindiQuestion] = await translate.translate(text, "hi");
-    const [hindiAnswer] = await translate.translate(text, "hi");
-    const [bengaliQuestion] = await translate.translate(text, "bn");
-    const [bengaliAnswer] = await translate.translate(text, "bn");
+    const [hindiQuestion] = await translate.translate(faq.question, "hi");
+    const [hindiAnswer] = await translate.translate(faq.answer, "hi");
+    const [bengaliQuestion] = await translate.translate(faq.question, "bn");
+    const [bengaliAnswer] = await translate.translate(faq.answer, "bn");
 
     return {
       question_hi: hindiQuestion,

@@ -1,0 +1,20 @@
+{
+  "env": {
+    "browser": false,
+    "node": true,
+    "es2021": true,
+    "mocha": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "semi": ["error", "always"],
+    "quotes": ["error", "double"],
+    "indent": ["error", 2],
+    "eqeqeq": "warn"
+  }
+}

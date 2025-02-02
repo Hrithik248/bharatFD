@@ -27,7 +27,6 @@ const handleFaqRetrieval = async (req, res) => {
       const data = faq.getTranslatedText(lang);
 
       await redisClient.setEx(cacheKey, 600, JSON.stringify(data));
-
       return res.status(200).json(data);
     }
 
@@ -69,8 +68,11 @@ const saveFaq = async (req, res) => {
 
     await faq.save();
 
+    await redisClient.del("faqs_en", "faqs_hi", "faqs_bn");
+
     return res.status(200).json({
       message: "FAQ saved successfully",
+      data: faq,
     });
   } catch (err) {
     console.error(err);
@@ -78,57 +80,75 @@ const saveFaq = async (req, res) => {
   }
 };
 
-const handFaqUpdate=async(req,res)=>{
-  try{
-    const id=req.params.id;
-    if(!req.body || (!req.body.question && !req.body.answer)){
+const handleFaqUpdate = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!req.body || (!req.body.question && !req.body.answer)) {
       return res.status(400).json({
-        error:"Please provide valid faq"
+        error: "Please provide valid faq",
       });
     }
-    const faq=await FAQ.findById(id);
-    if(!faq){
+    const faq = await FAQ.findById(id);
+    if (!faq) {
       return res.status(404).json({
-        error:"FAQ not found"
+        error: "FAQ not found",
       });
     }
-    if(req.body.question)faq.question=req.body.question;
-    if(req.body.answer)faq.answer=req.body.answer;
+    if (req.body.question) faq.question = req.body.question;
+    if (req.body.answer) faq.answer = req.body.answer;
 
     await faq.save();
+
+    await redisClient.del(
+      `faq_${id}_en`,
+      `faq_${id}_hi`,
+      `faq_${id}_bn`,
+      "faqs_en",
+      "faqs_hi",
+      "faqs_bn",
+    );
+
     return res.status(200).json({
-      message:"FAQ updated successfully"
+      message: "FAQ updated successfully",
     });
-  }
-  catch(err){
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({error:"Internal Server Error"});
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-const deleteFaq=async(req,res)=>{
-  try{
-    const id=req.params.id;
-    const faq=await FAQ.findById(id);
-    if(!faq){
+const deleteFaq = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const faq = await FAQ.findById(id);
+    if (!faq) {
       return res.status(404).json({
-        error:"FAQ not found"
+        error: "FAQ not found",
       });
     }
-    await faq.remove();
+    await FAQ.findByIdAndDelete(id);
+
+    await redisClient.del(
+      `faq_${id}_en`,
+      `faq_${id}_hi`,
+      `faq_${id}_bn`,
+      "faqs_en",
+      "faqs_hi",
+      "faqs_bn",
+    );
+
     return res.status(200).json({
-      message:"FAQ deleted successfully"
+      message: "FAQ deleted successfully",
     });
-  }
-  catch(err){
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({error:"Internal Server Error"});
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 module.exports = {
   handleFaqRetrieval,
   saveFaq,
-  handFaqUpdate,
-  deleteFaq
+  handleFaqUpdate,
+  deleteFaq,
 };

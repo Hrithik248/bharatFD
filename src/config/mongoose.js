@@ -1,18 +1,16 @@
 const mongoose = require("mongoose");
 
-async function connectToDatabase() { 
+async function connectToDatabase() {
   try {
-    await mongoose.connect(`mongodb://localhost:27017/bharatFD`, { 
-      useNewUrlParser: true,  
-      useUnifiedTopology: true, 
-      family: 4 
+    await mongoose.connect("mongodb://localhost:27017/bharatFD", {
+      family: 4,
     });
     console.log("Database connected");
-    return mongoose; 
+    return mongoose;
   } catch (err) {
     console.error("Database connection error:", err);
-    throw err; 
+    throw err;
   }
 }
 
-module.exports = connectToDatabase; 
+module.exports = connectToDatabase;

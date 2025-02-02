@@ -1,21 +1,21 @@
 const express = require("express");
 const router = require("./src/routes");
 const setupAdminJS = require("./src/config/admin");
-const connectToDatabase = require("./src/config/mongoose"); 
+const connectToDatabase = require("./src/config/mongoose");
 const app = express();
 const PORT = 7777;
 
 app.use(express.json());
 
-async function startServer() { 
+app.use("/api", router);
+
+async function startServer() {
   try {
     await connectToDatabase();
     console.log("Mongoose connected in index.js");
 
     await setupAdminJS(app);
-    console.log('AdminJS setup complete');
-
-    app.use("/api", router);
+    console.log("AdminJS setup complete");
 
     app.listen(PORT, (err) => {
       if (err) {
@@ -30,3 +30,5 @@ async function startServer() {
 }
 
 startServer();
+
+module.exports = app;
